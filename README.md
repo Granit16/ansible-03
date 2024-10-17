@@ -1,61 +1,35 @@
-# Домашнее задание к занятию 2 «Работа с Playbook»
+# Домашнее задание к занятию 3 «Использование Ansible»
 
 ## Подготовка к выполнению
 
-1. Изучил ClickHouse и Vector, в том числе по видео на Youtube.
+1. Создал в Yandex Cloud три ВМ с ОС Fedora 37:
+    * clickhouse 2 cpu core, 4 gb ram
+    * vector 2 cpu core, 4 gb ram
+    * lighthouse 2 cpu core, 2 gb ram
 
-2. Создан публичный репозиторий https://github.com/Granit16/ansible-02
+2. Использовал репозиторий https://github.com/VKCOM/lighthouse в п.3
 
-3. В нем воссоздан playbook задания.
-
-4. В качестве хостов созданы ВМ на ОС Fedora 37
 
 
 
 ## Основная часть
 
-1. Подготовил файл **prod.yml**, описал в нем host clickhouse-01 (ВМ)
+1. Дописал в playbook из предыдущего Домашнего задания таски, которые устанавливают **nginx** и **lighthouse** на хосты группы `lighthouse`.
 
-2. Дописал несколько тасков: `Get vector distrib`, `Install vector packages` и `Config vector`.
-    Конфигурация деплоится из шаблона **/templates/vector.yml**.
-    Создан `handler: Restart vector service`, который перезапускает vector после изменения конфигурации.
+2. При создании таксков были использованы модули `yum`, `template`, а также `command`.
 
-3. При создании тасков были использованы `get_url`, `template`.
+3. Описал таски, которые должны клонировать репозиторий с lighthouse, а также устанавливать и конфигурировать веб-сервер Nginx.
 
-4. Таски качают дистрибутив `vector`, устанавливают его и конфигуриурет из шаблона.
+4. В файл **inventory/site.yml** было доавблено описание группы хостов `lighthouse`.
 
-5. <details><summary>Результат выполнения команды ansible-lint site.yml</summary>
-    
-    Ошибок нет, имеются несклолько предупреждений
+5. Запустил команду `ansible-lint site.yml` - ошибок нет.
 
-    ![](https://github.com/Granit16/ansible-02/blob/main/screenshots/lint.png)
+6. Запустил playbook с флагом `--check` - playbook прошел валидацию успешно.
 
-</details>
+7. Запустил playbook с флагом `--diff` - playbook успешно отработал.
 
-6. <details><summary>Запустил playbook с флагом `--check`</summary>
-    
-    Playbook прошел валидацию успешно:
+8. Повторно запустил playbook с флагом `--diff` - playbook успешно отработал, с абсолютно таким же результатом.
 
-    ![](https://github.com/Granit16/ansible-02/blob/main/screenshots/check.png)
-
-</details>
-
-7. <details><summary>Запустил playbook с флагом `--diff`</summary>
-    
-    Playbook успешно отработал:
-
-    ![](https://github.com/Granit16/ansible-02/blob/main/screenshots/diff1.png)
-
-</details>
-
-8. <details><summary>Повторно запустил playbook с флагом `--diff`</summary>
-    
-    Playbook успешно отработал, с абсолютно таким же результатом:
-
-    ![](https://github.com/Granit16/ansible-02/blob/main/screenshots/diff2.png)
-
-</details>
-
-9. Playbook домашнего задания состоит из нескольких `tasks`, который на `host`, описанный в файле **/inventory/prod.yml**, скачивает, устанавливает и конфигурирует приложения `Clickhouse` и `Vector`. Скриншоты запуска playbook с различными флагами приведены выше в соответствующих пунктах.
+9. Playbook домашнего задания состоит из нескольких `tasks`, который на `host`, описанный в файле **/inventory/prod.yml**, скачивает, устанавливает и конфигурирует приложения `Clickhouse`, `Vector`, `Nginx` и `Lighthouse`. `Nginx` конфигурируется из шаблона, в котором используется единственная переменна `ngnix_user_name`.
 
 10. Создан git-репозиторий с итоговым playbook, решение домашеного задания описано в README.md
